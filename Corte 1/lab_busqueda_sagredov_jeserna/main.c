@@ -4,6 +4,7 @@
  * @author Jojan Esteban Serna Serna <jeserna@unicauca.edu.co>
  */
 #include <stdio.h>
+#include <linux/limits.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -96,8 +97,12 @@ int buscar(char const *directorio, char const *patron)
     while ((ent = readdir(d)) != NULL)
     {
         // Construir la ruta completa directorio/ent->d_name
-        char *ruta = (char *)malloc(sizeof(directorio) + sizeof('/') + sizeof(ent->d_name) + 1);
-        sprintf(ruta, "%s/%s", directorio, ent->d_name);
+        char *sep = "/";
+        size_t tam = strlen(directorio) + strlen(sep) + strlen(ent->d_name) + 1;
+        char *ruta = (char *)malloc(tam*sizeof(char));
+        sprintf(ruta, "%s%s%s\0", directorio, sep,ent->d_name);
+
+
         // Tenga en cuenta! En C no se puede concatenar las cadenas de
         // esta forma
         // Se debe reservar memoria suficiente con malloc, usar strcpy
@@ -106,12 +111,21 @@ int buscar(char const *directorio, char const *patron)
         // para almacenar directorio, "/" y ent->d_name.
         // Toda cadena válida en C termina en nulo, por lo tanto se
         // debe reservar 1 byte más de memoria
+
         // Verificar si la entrada (archivo o directorio) contiene
         // el patrón de búsqueda
         if (strstr(ent->d_name, patron))
         {
             // imprimir la ruta completa
-            printf("%s\n", ruta);
+            // Reservar memoria para la ruta real
+            char ruta_completa[PATH_MAX];
+            char *result = realpath(ruta, ruta_completa);
+            
+            if (result == NULL) {
+                perror("realpath");
+                return EXIT_FAILURE;
+            }
+            printf("%s\n", ruta_completa);
             total++;
         }
         // Si la entrada es un directorio, se debe buscar
