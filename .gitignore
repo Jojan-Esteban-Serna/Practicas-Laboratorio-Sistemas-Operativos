@@ -2,3 +2,5 @@
 *.json
 Corte 1/lab_busqueda_sagredov_jeserna/main
 *.o
+html
+latex
