@@ -14,8 +14,19 @@
  * @brief Muestra la ayuda del programa
  */
 void usage(char const *program_name);
+
+/**
+ * @brief Funcion para verificar si una ruta dad es un directorio
+ * @return Retorna 1 si la ruta dada es un directorio, 0 en caso contrario
+*/
 int es_directorio(char const* ruta);
+
+/**
+ * @brief Busca recursivamente archivos/directorios cuyo nombre contenga patron
+ * @return Retorna el total de coincidencias
+*/
 int buscar(char const* directorio, char const *patron);
+
 int main(int argc, char const *argv[])
 {
     const char *dir;
@@ -34,7 +45,9 @@ int main(int argc, char const *argv[])
     // TODO
     exit(EXIT_SUCCESS);
 }
-
+/**
+ * @brief Imprime como se usa el programa
+*/
 void usage(char const *program_name)
 {
     printf("Busqueda de archivos\n");
@@ -65,8 +78,7 @@ int es_directorio(char const *ruta)
         return 0;
     }
 }
-//Busca recursivamente archivos/directorios cuyo nombre contenga patron
-//Retorna el total de coincidencias
+
 int buscar(char const* directorio, char const *patron){
     int total = 0;
     //Abrir el directorio con opendir
