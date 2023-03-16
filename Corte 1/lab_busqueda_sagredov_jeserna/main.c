@@ -1,6 +1,7 @@
 /**
  * @file
  * @brief Busqueda de archivos
+ * @author Santiago Agredo Vallejo   <sagredov@unicauca.edu.co>
  * @author Jojan Esteban Serna Serna <jeserna@unicauca.edu.co>
  */
 #include <stdio.h>
@@ -13,17 +14,21 @@
 
 /**
  * @brief Muestra la ayuda del programa
+ * @param[in] program_name Nombre del programa
  */
 void usage(char const *program_name);
 
 /**
- * @brief Funcion para verificar si una ruta dad es un directorio
+ * @brief Funcion para verificar si una ruta dada es un directorio
+ * @param[in] ruta Ruta para la cual se quiere verificar si es un directorio o no
  * @return Retorna 1 si la ruta dada es un directorio, 0 en caso contrario
  */
 int es_directorio(char const *ruta);
 
 /**
  * @brief Busca recursivamente archivos/directorios cuyo nombre contenga patron
+ * @param[in] directorio Directorio sobre el cual se esta buscando el patron
+ * @param[in] patron Patron a buscar
  * @return Retorna el total de coincidencias
  */
 int buscar(char const *directorio, char const *patron);
@@ -46,9 +51,7 @@ int main(int argc, char const *argv[])
     // TODO
     exit(EXIT_SUCCESS);
 }
-/**
- * @brief Imprime como se usa el programa
- */
+
 void usage(char const *program_name)
 {
     printf("Busqueda de archivos\n");
