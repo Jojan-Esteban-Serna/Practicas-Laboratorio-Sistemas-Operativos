@@ -99,8 +99,8 @@ int buscar(char const *directorio, char const *patron)
         // Construir la ruta completa directorio/ent->d_name
         char *sep = "/";
         size_t tam = strlen(directorio) + strlen(sep) + strlen(ent->d_name) + 1;
-        char *ruta = (char *)malloc(tam*sizeof(char));
-        sprintf(ruta, "%s%s%s", directorio, sep,ent->d_name);
+        char *ruta = (char *)malloc(tam * sizeof(char));
+        sprintf(ruta, "%s%s%s", directorio, sep, ent->d_name);
 
         // Tenga en cuenta! En C no se puede concatenar las cadenas de
         // esta forma
@@ -118,9 +118,10 @@ int buscar(char const *directorio, char const *patron)
             // imprimir la ruta completa
             // Reservar memoria para la ruta completa
             char ruta_completa[PATH_MAX];
-            
-            //Obtener la ruta ruta completa y verificar que realpath no devuelva NULL
-            if (realpath(ruta, ruta_completa) == NULL) {
+
+            // Obtener la ruta ruta completa y verificar que realpath no devuelva NULL
+            if (realpath(ruta, ruta_completa) == NULL)
+            {
                 perror("realpath");
                 return EXIT_FAILURE;
             }
