@@ -100,8 +100,7 @@ int buscar(char const *directorio, char const *patron)
         char *sep = "/";
         size_t tam = strlen(directorio) + strlen(sep) + strlen(ent->d_name) + 1;
         char *ruta = (char *)malloc(tam*sizeof(char));
-        sprintf(ruta, "%s%s%s\0", directorio, sep,ent->d_name);
-
+        sprintf(ruta, "%s%s%s", directorio, sep,ent->d_name);
 
         // Tenga en cuenta! En C no se puede concatenar las cadenas de
         // esta forma
