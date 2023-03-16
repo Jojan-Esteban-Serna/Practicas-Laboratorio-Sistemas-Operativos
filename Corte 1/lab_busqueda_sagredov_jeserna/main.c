@@ -116,9 +116,10 @@ int buscar(char const *directorio, char const *patron)
         if (strstr(ent->d_name, patron))
         {
             // imprimir la ruta completa
-            // Reservar memoria para la ruta real
+            // Reservar memoria para la ruta completa
             char ruta_completa[PATH_MAX];
             
+            //Obtener la ruta ruta completa y verificar que realpath no devuelva NULL
             if (realpath(ruta, ruta_completa) == NULL) {
                 perror("realpath");
                 return EXIT_FAILURE;
