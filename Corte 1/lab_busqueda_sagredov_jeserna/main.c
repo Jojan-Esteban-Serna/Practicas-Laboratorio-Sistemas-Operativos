@@ -116,7 +116,7 @@ int buscar(char const* directorio, char const *patron){
         //Precaucion: descartar los directorios "." (actual)
         //y ".." (anterior) para prevenir que la funcion nunca termine
         //Tenga en cuenta! En C, las cadenas se comparan como strcmp
-        if(es_directorio(ruta)&& strcmp(ent->d_name, ".") !=0 && strcmp(ent->d_name, "..")){
+        if(es_directorio(ruta)&& strcmp(ent->d_name, ".") !=0 && strcmp(ent->d_name, "..") != 0){
             //Buscar recursivamente dentro del subdirectorio
             total += buscar(ruta,patron);
         }
