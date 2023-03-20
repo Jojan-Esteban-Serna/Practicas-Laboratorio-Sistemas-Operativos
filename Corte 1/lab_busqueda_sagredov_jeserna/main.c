@@ -5,12 +5,14 @@
  * @author Jojan Esteban Serna Serna <jeserna@unicauca.edu.co>
  */
 #include <stdio.h>
-#include <linux/limits.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
-
+#include <limits.h>
+#ifndef PATH_MAX
+#include <linux/limits.h>
+#endif
 /**
  * @brief Muestra la ayuda del programa
  * @param[in] program_name Nombre del programa
