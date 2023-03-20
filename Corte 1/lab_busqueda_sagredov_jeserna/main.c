@@ -129,7 +129,6 @@ int buscar(char const *directorio, char const *patron)
                 return EXIT_FAILURE;
             }
             printf("%s\n", ruta_completa);
-            free(ruta_completa);
             total++;
         }
         // Si la entrada es un directorio, se debe buscar
