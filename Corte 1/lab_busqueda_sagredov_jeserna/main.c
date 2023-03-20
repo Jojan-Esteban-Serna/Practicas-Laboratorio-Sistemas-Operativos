@@ -9,10 +9,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
-#include <limits.h>
-#ifndef PATH_MAX
-#include <linux/limits.h>
-#endif
 /**
  * @brief Muestra la ayuda del programa
  * @param[in] program_name Nombre del programa
@@ -117,17 +113,8 @@ int buscar(char const *directorio, char const *patron)
         // el patrón de búsqueda
         if (strstr(ent->d_name, patron))
         {
-            // imprimir la ruta completa
-            // Reservar memoria para la ruta completa
-            char ruta_completa[PATH_MAX];
-
-            // Obtener la ruta ruta completa y verificar que realpath no devuelva NULL
-            if (realpath(ruta, ruta_completa) == NULL)
-            {
-                perror("realpath");
-                return EXIT_FAILURE;
-            }
-            printf("%s\n", ruta_completa);
+            //Imprimir la ruta completa
+            printf("%s\n", ruta);
             total++;
         }
         // Si la entrada es un directorio, se debe buscar
