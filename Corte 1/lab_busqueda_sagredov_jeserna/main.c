@@ -100,10 +100,8 @@ int buscar(char const *directorio, char const *patron)
     while ((ent = readdir(d)) != NULL)
     {
         // Construir la ruta completa directorio/ent->d_name
-        char *sep = "/";
-        size_t tam = strlen(directorio) + strlen(sep) + strlen(ent->d_name) + 1;
-        char *ruta = (char *)malloc(tam * sizeof(char));
-        sprintf(ruta, "%s%s%s", directorio, sep, ent->d_name);
+        char *ruta = (char *)malloc(strlen(directorio) + strlen(ent->d_name) + 2);
+        sprintf(ruta, "%s/%s", directorio, ent->d_name);
 
         // Tenga en cuenta! En C no se puede concatenar las cadenas de
         // esta forma
