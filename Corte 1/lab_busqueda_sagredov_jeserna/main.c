@@ -122,12 +122,14 @@ int buscar(char const *directorio, char const *patron)
             char ruta_completa[PATH_MAX];
 
             // Obtener la ruta ruta completa y verificar que realpath no devuelva NULL
-            if (realpath(ruta, ruta_completa) == NULL)
+            if (realpath(ruta, ruta_completa) != NULL)
+            {
+                printf("%s\n", ruta_completa);
+            }
+            else
             {
                 perror("realpath");
-                return 1; // Se retorna 1, porque aunque no se haya podido obtener la ruta completa, el directorio si que contenia el patron buscado
             }
-            printf("%s\n", ruta_completa);
             total++;
         }
         // Si la entrada es un directorio, se debe buscar
