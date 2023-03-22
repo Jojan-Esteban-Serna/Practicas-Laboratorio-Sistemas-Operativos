@@ -125,7 +125,7 @@ int buscar(char const *directorio, char const *patron)
             if (realpath(ruta, ruta_completa) == NULL)
             {
                 perror("realpath");
-                return EXIT_FAILURE;
+                return 1; // Se retorna 1, porque aunque no se haya podido obtener la ruta completa, el directorio si que contenia el patron buscado
             }
             printf("%s\n", ruta_completa);
             total++;
