@@ -56,6 +56,13 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
 
    /** \todo Implementar la planificacion! */
 
+   //Obtener el tamaño de la lista de procesos
+  int n = processes->count;
+  //Obtener el tiempo de llegada minimo de todos los procesos
+  int tiempo_actual = get_next_arrival(processes,nqueues);
+  //Procesar las llegadas en el tiempo minimo
+  int num_ready = process_arrival(tiempo_actual,queues,nqueues);
+  
   // Imprimir el resultado de la simulacion
 
   for (i = 0; i < nqueues; i++)
