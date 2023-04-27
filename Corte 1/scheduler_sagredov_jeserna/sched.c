@@ -59,7 +59,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
   // Obtener el tamaño de la lista de procesos
   int n = processes->count;
   // Obtener el tiempo de llegada minimo de todos los procesos
-  int current_time = get_next_arrival(processes, nqueues);
+  int current_time = get_next_arrival(queues, nqueues);
   // Procesar las llegadas en el tiempo minimo
   int num_ready = process_arrival(current_time, queues, nqueues);
   // Recordar el indice la cola actual
