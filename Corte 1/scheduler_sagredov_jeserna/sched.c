@@ -64,6 +64,8 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
   int num_ready = process_arrival(current_time, queues, nqueues);
   // Recordar el indice la cola actual
   int current_queue_index;
+  // Tiempo Asignado En la CPU
+  int assigned_time;
   // Buscar la cola que tenga al menos un proceso en estado de listo
   priority_queue *current_queue;
   for (size_t i = 0; i < nqueues; i++)
@@ -80,21 +82,32 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
   // mientras no haya procesos por simular:
   while (n > 0)
   {
-    // Obtener el primer proceso listo en la cola seleccionada.
+    / Obtener el primer proceso listo en la cola seleccionada.
     current_process = (process *)front(current_queue->ready);
     // Quitar el proceso de la cola de listos.
     current_queue->ready = pop_front(current_queue->ready);
-    // Pasar el proceso a ejecución.
+    // Pasar el proceso a ejecuciÃ³n.
     current_process->state = RUNNING;
     // Suponer que al proceso se le puede asignar todo el quantum.
-    int assigned_time = current_queue->quantum;
+	
+	// Si es FIFO se le asigna a el proceso todo el timepo de ejecucion
+	if(current_queue->strategy == FIFO){
+		 assigned_time = current_process->execution_time;
+	}else{
+		 assigned_time = current_queue->quantum;
+	}
     // Si el tiempo restante del proceso es menor al tiempo que se puede asignar, tomar solo el tiempo restante.
-
+	// Como en FIFO No se necesita el Tiempo Restante No se Usa, Arreglar Este If
+	if(current_queue->strategy != FIFO){
     if (current_process->remaining_time < current_queue->quantum)
     {
       assigned_time = current_process->remaining_time;
       printf("Se asigno al proceso %s %d de tiempo\n", current_process->name, assigned_time);
     }
+	}else{
+		printf("Se asigno al proceso %s %d de tiempo\n", current_process->name, assigned_time);
+		
+	}
 
     // Validar SRT:
 
