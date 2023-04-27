@@ -62,7 +62,8 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
   int current_time = get_next_arrival(processes, nqueues);
   // Procesar las llegadas en el tiempo minimo
   int num_ready = process_arrival(current_time, queues, nqueues);
-
+  // Recordar el indice la cola actual
+  int current_queue_index;
   // Buscar la cola que tenga al menos un proceso en estado de listo
   priority_queue *current_queue;
   for (size_t i = 0; i < nqueues; i++)
@@ -140,42 +141,54 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     if (current_process->remaining_time == 0)
     {
       // Levar a la lista finished de su cola de prioridad
-      current_queue->finished = push_back(current_queue->finished,current_process);
+      current_queue->finished = push_back(current_queue->finished, current_process);
       // Restar uno al total de procesos que falta por simular
       n--;
       // SRT: Si el proceso finaliza justo cuando llega el otro, pasar a la siguiente cola.
-      if(current_queue->strategy == SRT){
-          
+      if (current_queue->strategy == SRT)
+      {
       }
       // En caso contrario, no se debe cambiar de cola de prioridad!
-      else{
-
+      else
+      {
       }
-    }else{
-      // Si el proceso no finalizo:
+    }
+    // Si el proceso no finalizo:
+    else
+    {
       // Pasar a estado de listo
       current_process->state = READY;
       // Enviar a la cola de listos de su prioridad, de acuerdo con el algoritmo de esa cola.
-      if(current_queue->strategy == SRT){
-
-      }else if(current_queue->strategy  == FIFO){
-
-      }else if(current_queue->strategy  == SJF){
-        
-      }else if(current_queue->strategy  == RR){
-        
+      if (current_queue->strategy == SRT)
+      {
+      }
+      else if (current_queue->strategy == FIFO)
+      {
+      }
+      else if (current_queue->strategy == SJF)
+      {
+      }
+      else if (current_queue->strategy == RR)
+      {
       }
     }
-    
+
     // Fin si
 
     // Avanzar el tiempo a la cantidad de CPU asignada.
-
+    current_time += assigned_time;
     // Procesar las llegadas de nuevos procesos al tiempo actual.
+    int num_ready = process_arrival(current_time, queues, nqueues);
 
     // Terminar si ya no existen procesos por planificar.
-
-    // Avanzar a la siguiente cola de prioridad
+    if(n == 0){
+      break;
+    }
+    // Avanzar a la siguiente cola de prioridad (Usando round robin)
+    current_queue_index++;
+    if(current_queue_index == nqueues){
+      current_queue_index = 0;
+    }
     // SRT: Si el proceso que se expropio de la CPU no uso todo el quantum
     // se debe asignar el tiempo restante del quantum al proceso que llego
     // no se cambia de cola de prioridad!
