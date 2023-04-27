@@ -108,7 +108,6 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
         // Verificar si el tiempo de llegada del siguiente proceso SRT es menor al tiempo donde se supone termina el proceso actual
         // Y verificar si el siguiente proceso SRT tiene menor tiempo restante que el actual
         if (next_srt_process->arrival_time < expected_end_process_time && next_srt_process->remaining_time < current_process->remaining_time)
-          ;
         {
           // POST: El siguiente proceso llego antes de el tiempo donde se supone que terminaba el proceso actual
 
@@ -138,13 +137,17 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
 
     // Verificar si el proceso ha finalizado
     // Si el proceso finalizo:
-    // Levar a la lista finished de su cola de prioridad
-    // Restar uno al total de procesos que falta por simular
-    // SRT: Si el proceso finaliza justo cuando llega el otro, pasar a la siguiente cola.
-    // En caso contrario, no se debe cambiar de cola de prioridad!
-    // Si el proceso no finalizo:
-    // Pasar a estado de listo
-    // Enviar a la cola de listos de su prioridad, de acuerdo con el algoritmo de esa cola.
+    if (current_process->remaining_time == 0)
+    {
+      // Levar a la lista finished de su cola de prioridad
+      current_queue->finished = push_back(current_queue->finished,current_process);
+      // Restar uno al total de procesos que falta por simular
+      // SRT: Si el proceso finaliza justo cuando llega el otro, pasar a la siguiente cola.
+      // En caso contrario, no se debe cambiar de cola de prioridad!
+      // Si el proceso no finalizo:
+      // Pasar a estado de listo
+      // Enviar a la cola de listos de su prioridad, de acuerdo con el algoritmo de esa cola.
+    }
     // Fin si
 
     // Avanzar el tiempo a la cantidad de CPU asignada.
