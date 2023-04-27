@@ -130,7 +130,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       // Usar add_waiting_time()
       add_waiting_time(processes, current_process, current_time, assigned_time);
       // Adicionar un nuevo elemento a la secuencia de ejecucion
-      // Usar create_slice() y adicionar a la lista de secuencias de ejecucion
+      /** Usar create_slice() y \todo adicionar a la lista de secuencias de ejecucion*/
       push_back(current_process->slices, create_slice(CPU, current_time, assigned_time));
     }
 
