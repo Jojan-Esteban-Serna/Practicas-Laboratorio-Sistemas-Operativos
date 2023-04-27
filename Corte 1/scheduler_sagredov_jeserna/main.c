@@ -84,18 +84,18 @@ int main(int argc, char * argv[]) {
   filename = "gantt";
 
 
-  if (argc < 2) {
+ // if (argc < 2) {
     /* Si el programa se invoca sin argumentos, tomar la entrada de Stdin. */
-    fd = stdin;
-  }else {
+   // fd = stdin;
+  //}else {
     /* Si se especifica el nombre de un archivo con los parametros de la simulacion, tomar la entrada del archivo. */
-    filename = argv[1];
+    filename = "fifo.txt";
     fd = fopen(filename, "r");
     if (!fd) {
       fd = stdin;
       filename = "gantt";
       }
-  }
+  //}
 
   //Nombre del archivo de la grafica
   plot_filename = concat(remove_extension(filename), ".gpi");

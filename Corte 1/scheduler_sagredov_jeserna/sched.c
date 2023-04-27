@@ -81,7 +81,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     // Obtener el primer proceso listo en la cola seleccionada.
     current_process = (process *)front(current_queue->ready);
     // Quitar el proceso de la cola de listos.
-    current_queue->ready = pop_front(current_queue);
+    current_queue->ready = pop_front(current_queue->ready);
     // Pasar el proceso a ejecución.
     current_process->state = RUNNING;
     // Suponer que al proceso se le puede asignar todo el quantum.
