@@ -41,11 +41,11 @@ void print_slices(process *p);
 void schedule(list *processes, priority_queue *queues, int nqueues)
 {
   int i;
-  list *sequence; // Secuencia de ejecucion
-  sequence_item * si; //Item de secuencia de CPU
-  int total_waiting; //Tiempo total de espera
-  node_iterator it; //Iterador de lista
-  process * p; //Apuntador a un proceso
+  list *sequence;           // Secuencia de ejecucion
+  sequence_item *si;        // Item de secuencia de CPU
+  int total_waiting;        // Tiempo total de espera
+  node_iterator it;         // Iterador de lista
+  process *current_process; // Apuntador a un proceso
 
   // Preparar para una nueva simulacion
   // Inicializar las colas de prioridad con la informacion de la lista
@@ -54,15 +54,114 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
 
   sequence = create_list();
 
-   /** \todo Implementar la planificacion! */
+  /** \todo Implementar la planificacion! */
 
-   //Obtener el tamaño de la lista de procesos
+  // Obtener el tamaño de la lista de procesos
   int n = processes->count;
-  //Obtener el tiempo de llegada minimo de todos los procesos
-  int tiempo_actual = get_next_arrival(processes,nqueues);
-  //Procesar las llegadas en el tiempo minimo
-  int num_ready = process_arrival(tiempo_actual,queues,nqueues);
-  
+  // Obtener el tiempo de llegada minimo de todos los procesos
+  int current_time = get_next_arrival(processes, nqueues);
+  // Procesar las llegadas en el tiempo minimo
+  int num_ready = process_arrival(current_time, queues, nqueues);
+
+  // Buscar la cola que tenga al menos un proceso en estado de listo
+  priority_queue *current_queue;
+  for (size_t i = 0; i < nqueues; i++)
+  {
+    if (!empty(queues[i].ready))
+    {
+      current_queue = &queues[i];
+    }
+  }
+  // proceso_actual = NULO
+  current_process = NULL;
+  // mientras no haya procesos por simular:
+  while (n > 0)
+  {
+    // Obtener el primer proceso listo en la cola seleccionada.
+    current_process = (process *)front(current_queue->ready);
+    // Quitar el proceso de la cola de listos.
+    current_queue->ready = pop_front(current_queue);
+    // Pasar el proceso a ejecución.
+    current_process->state = RUNNING;
+    // Suponer que al proceso se le puede asignar todo el quantum.
+    int assigned_time = current_queue->quantum;
+    // Si el tiempo restante del proceso es menor al tiempo que se puede asignar, tomar solo el tiempo restante.
+
+    if (current_process->remaining_time < current_queue->quantum)
+    {
+      assigned_time = current_process->remaining_time;
+    }
+
+    // Validar SRT:
+    if (current_queue->strategy == SRT)
+    {
+      // POST: La cola es SRT
+      //  Verificar si llega un proceso a la cola SRT en este quantum y tiene menor tiempo restante
+      process *next_srt_process = (process *)front(current_queue->arrival);
+      // Validar si ha llegado proceso
+      if (next_srt_process != NULL)
+      {
+        // POST: Hay un proceso en la cola SRT
+        // Calcular el tiempo en el que se supone termina el proceso actual
+        int expected_end_process_time = current_time + assigned_time;
+
+        // Verificar si el tiempo de llegada del siguiente proceso SRT es menor al tiempo donde se supone termina el proceso actual
+        // Y verificar si el siguiente proceso SRT tiene menor tiempo restante que el actual
+        if (next_srt_process->arrival_time < expected_end_process_time && next_srt_process->remaining_time < current_process->remaining_time)
+          ;
+        {
+          // POST: El siguiente proceso llego antes de el tiempo donde se supone que terminaba el proceso actual
+
+          // Solo dar el tiempo de CPU desde el tiempo actual hasta el tiempo de llegada del nuevo proceso
+          assigned_time = next_srt_process->arrival_time - current_time;
+        }
+      }
+    }
+
+    // Si se dio CPU al proceso:
+    if (assigned_time > 0)
+    {
+      // Actualizar el tiempo de uso de CPU del proceso
+
+      current_process->cpu_time = assigned_time;
+      // Disminuir el tiempo restante en el tiempo de CPU dado
+      current_process->remaining_time -= assigned_time;
+      // Aumentar el tiempo de espera de los demas procesos
+      // Usar add_waiting_time()
+      add_waiting_time(processes, current_process, current_time, assigned_time);
+      // Adicionar un nuevo elemento a la secuencia de ejecucion
+      // Usar create_slice() y adicionar a la lista de secuencias de ejecucion
+      push_back(current_process->slices, create_slice(CPU, current_time, assigned_time));
+    }
+
+    // Fin si
+
+    // Verificar si el proceso ha finalizado
+    // Si el proceso finalizo:
+    // Levar a la lista finished de su cola de prioridad
+    // Restar uno al total de procesos que falta por simular
+    // SRT: Si el proceso finaliza justo cuando llega el otro, pasar a la siguiente cola.
+    // En caso contrario, no se debe cambiar de cola de prioridad!
+    // Si el proceso no finalizo:
+    // Pasar a estado de listo
+    // Enviar a la cola de listos de su prioridad, de acuerdo con el algoritmo de esa cola.
+    // Fin si
+
+    // Avanzar el tiempo a la cantidad de CPU asignada.
+
+    // Procesar las llegadas de nuevos procesos al tiempo actual.
+
+    // Terminar si ya no existen procesos por planificar.
+
+    // Avanzar a la siguiente cola de prioridad
+    // SRT: Si el proceso que se expropio de la CPU no uso todo el quantum
+    // se debe asignar el tiempo restante del quantum al proceso que llego
+    // no se cambia de cola de prioridad!
+    // En cualquier otro caso, se pasa a la siguiente cola de prioridad.
+
+    // Si no existen procesos en estado de listos en ninguna cola, avanzar hasta la siguiente llegada (en cualquier cola)
+  }
+
   // Imprimir el resultado de la simulacion
 
   for (i = 0; i < nqueues; i++)
@@ -74,9 +173,9 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
   total_waiting = 0;
   for (it = head(processes); it != 0; it = next(it))
   {
-    p = (process *)it->data;
-    printf("%5d%20s%5d%5d%5d\n", i++, p->name, p->arrival_time, p->finished_time, p->waiting_time);
-    total_waiting = total_waiting + p->waiting_time;
+    current_process = (process *)it->data;
+    printf("%5d%20s%5d%5d%5d\n", i++, current_process->name, current_process->arrival_time, current_process->finished_time, current_process->waiting_time);
+    total_waiting = total_waiting + current_process->waiting_time;
   }
 
   printf("\nTotal waiting time: %d Average waiting time: %.3f\n", total_waiting, (float)((float)total_waiting / (int)processes->count));
@@ -144,7 +243,7 @@ void print_queue(priority_queue *queue)
   printf("}\n");
 }
 
-int compare_arrival(void * const a, void * const b)
+int compare_arrival(void *const a, void *const b)
 {
   process *p1;
   process *p2;
@@ -157,7 +256,7 @@ int compare_arrival(void * const a, void * const b)
   return p2->arrival_time - p1->arrival_time;
 }
 
-int compare_sjf(void * const a, void * const b)
+int compare_sjf(void *const a, void *const b)
 {
   process *p1;
   process *p2;
@@ -179,7 +278,7 @@ int compare_sjf(void * const a, void * const b)
   return result;
 }
 
-int compare_srt( void * const a,  void * const b)
+int compare_srt(void *const a, void *const b)
 {
   process *p1;
   process *p2;
