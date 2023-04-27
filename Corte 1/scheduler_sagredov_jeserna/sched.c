@@ -94,11 +94,12 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     }
 
     // Validar SRT:
+    process *next_srt_process;
     if (current_queue->strategy == SRT)
     {
       // POST: La cola es SRT
       //  Verificar si llega un proceso a la cola SRT en este quantum y tiene menor tiempo restante
-      process *next_srt_process = (process *)front(current_queue->arrival);
+      next_srt_process = (process *)front(current_queue->arrival);
       // Validar si ha llegado proceso
       if (next_srt_process != NULL)
       {
@@ -147,8 +148,9 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       // Restar uno al total de procesos que falta por simular
       n--;
       // SRT: Si el proceso finaliza justo cuando llega el otro, pasar a la siguiente cola.
-      if (current_queue->strategy == SRT)
+      if (current_queue->strategy == SRT && current_process->finished_time == next_srt_process->arrival_time)
       {
+
       }
       // En caso contrario, no se debe cambiar de cola de prioridad!
       else
@@ -161,18 +163,23 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       // Pasar a estado de listo
       current_process->state = READY;
       // Enviar a la cola de listos de su prioridad, de acuerdo con el algoritmo de esa cola.
-      if (current_queue->strategy == SRT)
+
+      if (queues[current_queue_index].strategy == SJF)
       {
+        // Para SJF y SRT, el proceso se inserta de acuerdo con el tiempo faltante
+        insert_ordered(queues[current_queue_index].ready, current_process, compare_sjf);
       }
-      else if (current_queue->strategy == FIFO)
+      else if (queues[current_queue_index].strategy == SJF || queues[i].strategy == SRT)
       {
+        // Para SJF y SRT, el proceso se inserta de acuerdo con el tiempo faltante
+        insert_ordered(queues[current_queue_index].ready, current_process, compare_srt);
       }
-      else if (current_queue->strategy == SJF)
+      else
       {
+        // Para los demas algoritmos, el nuevo proceso se inserta al final de la cola de listos
+        push_back(queues[current_queue_index].ready, current_process);
       }
-      else if (current_queue->strategy == RR)
-      {
-      }
+      
     }
 
     // Fin si
@@ -197,6 +204,9 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     // En cualquier otro caso, se pasa a la siguiente cola de prioridad.
 
     // Si no existen procesos en estado de listos en ninguna cola, avanzar hasta la siguiente llegada (en cualquier cola)
+    if(empty(current_queue->ready)){
+      current_time = get_next_arrival(queues,nqueues);
+    }
   }
 
   // Imprimir el resultado de la simulacion
