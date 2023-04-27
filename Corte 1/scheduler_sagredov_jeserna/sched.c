@@ -142,12 +142,31 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       // Levar a la lista finished de su cola de prioridad
       current_queue->finished = push_back(current_queue->finished,current_process);
       // Restar uno al total de procesos que falta por simular
+      n--;
       // SRT: Si el proceso finaliza justo cuando llega el otro, pasar a la siguiente cola.
+      if(current_queue->strategy == SRT){
+          
+      }
       // En caso contrario, no se debe cambiar de cola de prioridad!
+      else{
+
+      }
+    }else{
       // Si el proceso no finalizo:
       // Pasar a estado de listo
+      current_process->state = READY;
       // Enviar a la cola de listos de su prioridad, de acuerdo con el algoritmo de esa cola.
+      if(current_queue->strategy == SRT){
+
+      }else if(current_queue->strategy  == FIFO){
+
+      }else if(current_queue->strategy  == SJF){
+        
+      }else if(current_queue->strategy  == RR){
+        
+      }
     }
+    
     // Fin si
 
     // Avanzar el tiempo a la cantidad de CPU asignada.
