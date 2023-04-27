@@ -142,6 +142,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     {
       // Levar a la lista finished de su cola de prioridad
       current_process->state = FINISHED;
+      current_process->finished_time = current_time;
       current_queue->finished = push_back(current_queue->finished, current_process);
       // Restar uno al total de procesos que falta por simular
       n--;
