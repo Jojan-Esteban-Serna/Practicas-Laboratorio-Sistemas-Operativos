@@ -72,7 +72,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     {
       current_queue = &queues[i];
       current_queue_index = i;
-      printf("Actual indice de cola %d\n",current_queue_index);
+      printf("Actual indice de cola %d\n", current_queue_index);
     }
   }
   // proceso_actual = NULO
@@ -93,7 +93,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     if (current_process->remaining_time < current_queue->quantum)
     {
       assigned_time = current_process->remaining_time;
-      printf("Se asigno al proceso %s %d de tiempo\n", current_process->name,assigned_time);
+      printf("Se asigno al proceso %s %d de tiempo\n", current_process->name, assigned_time);
     }
 
     // Validar SRT:
@@ -130,7 +130,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       current_process->cpu_time = assigned_time;
       // Disminuir el tiempo restante en el tiempo de CPU dado
       current_process->remaining_time -= assigned_time;
-      printf("Se le dio CPU al proceso %s, le queda %d\n",current_process->name,current_process->remaining_time);
+      printf("Se le dio CPU al proceso %s, le queda %d\n", current_process->name, current_process->remaining_time);
       // Aumentar el tiempo de espera de los demas procesos
       // Usar add_waiting_time()
       add_waiting_time(processes, current_process, current_time, assigned_time);
@@ -147,11 +147,11 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     {
       // Levar a la lista finished de su cola de prioridad
       current_process->state = FINISHED;
-      current_process->finished_time = current_time+assigned_time;
+      current_process->finished_time = current_time + assigned_time;
       current_queue->finished = push_back(current_queue->finished, current_process);
       // Restar uno al total de procesos que falta por simular
       n--;
-      printf("EL proceso %s termino, quedan %d procesos\n",current_process->name, n);
+      printf("EL proceso %s termino, quedan %d procesos\n", current_process->name, n);
       // SRT: Si el proceso finaliza justo cuando llega el otro, pasar a la siguiente cola.
       // En caso contrario, no se debe cambiar de cola de prioridad!
     }
@@ -160,7 +160,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     {
       // Pasar a estado de listo
       current_process->state = READY;
-      printf("El proceso %s no finalizo, pasado a listos\n",current_process->name);
+      printf("El proceso %s no finalizo, pasado a listos\n", current_process->name);
       // Enviar a la cola de listos de su prioridad, de acuerdo con el algoritmo de esa cola.
       if (current_queue->strategy == SJF)
       {
@@ -177,35 +177,39 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
         // Para los demas algoritmos, el nuevo proceso se inserta al final de la cola de listos
         push_back(current_queue->ready, current_process);
       }
-      
     }
 
     // Fin si
 
     // Avanzar el tiempo a la cantidad de CPU asignada.
     current_time += assigned_time;
-    printf("Tiempo actual %d\n",current_time);
+    printf("Tiempo actual %d\n", current_time);
     // Procesar las llegadas de nuevos procesos al tiempo actual.
     int num_ready = process_arrival(current_time, queues, nqueues);
 
     // Terminar si ya no existen procesos por planificar.
-    if(n == 0){
+    if (n == 0)
+    {
       break;
     }
     // Avanzar a la siguiente cola de prioridad (Usando round robin)
     current_queue_index++;
-    if(current_queue_index == nqueues){
+    if (current_queue_index == nqueues)
+    {
       current_queue_index = 0;
     }
+    current_queue = &queues[current_queue_index];
+
     // SRT: Si el proceso que se expropio de la CPU no uso todo el quantum
     // se debe asignar el tiempo restante del quantum al proceso que llego
     // no se cambia de cola de prioridad!
     // En cualquier otro caso, se pasa a la siguiente cola de prioridad.
 
     // Si no existen procesos en estado de listos en ninguna cola, avanzar hasta la siguiente llegada (en cualquier cola)
-    if(get_ready_count(queues,nqueues) == 0){
-      current_time = get_next_arrival(queues,nqueues);
-      printf("No llegaron proceso, avanzando a %d\n",current_time);
+    if (get_ready_count(queues, nqueues) == 0)
+    {
+      current_time = get_next_arrival(queues, nqueues);
+      printf("No llegaron proceso, avanzando a %d\n", current_time);
     }
   }
 
