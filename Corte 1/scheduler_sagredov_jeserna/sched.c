@@ -136,7 +136,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       add_waiting_time(processes, current_process, current_time, assigned_time);
       // Adicionar un nuevo elemento a la secuencia de ejecucion
       /** Usar create_slice() y \todo adicionar a la lista de secuencias de ejecucion*/
-      push_back(current_process->slices, create_slice(CPU, current_time, current_time+assigned_time));
+      push_back(current_process->slices, create_slice(CPU, current_time, current_time + assigned_time));
     }
 
     // Fin si
@@ -193,7 +193,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       break;
     }
     // Avanzar a la siguiente cola de prioridad (Usando round robin)
-    current_queue_index = (current_queue_index+1)%nqueues;
+    current_queue_index = (current_queue_index + 1) % nqueues;
     current_queue = &queues[current_queue_index];
 
     // SRT: Si el proceso que se expropio de la CPU no uso todo el quantum
@@ -206,6 +206,11 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     {
       current_time = get_next_arrival(queues, nqueues);
       printf("No llegaron proceso, avanzando a %d\n", current_time);
+    }
+    // Si la cola a la que se avanzo tiene lista de listos vacia avanzar el indice
+    for (; empty(queues[current_queue_index].ready); current_queue_index = (current_queue_index + 1) % nqueues)
+    {
+      current_queue = &queues[current_queue_index];
     }
   }
 
