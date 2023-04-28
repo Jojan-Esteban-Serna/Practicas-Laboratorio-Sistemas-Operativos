@@ -193,11 +193,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       break;
     }
     // Avanzar a la siguiente cola de prioridad (Usando round robin)
-    current_queue_index++;
-    if (current_queue_index == nqueues)
-    {
-      current_queue_index = 0;
-    }
+    current_queue_index = (current_queue_index+1)%nqueues;
     current_queue = &queues[current_queue_index];
 
     // SRT: Si el proceso que se expropio de la CPU no uso todo el quantum
