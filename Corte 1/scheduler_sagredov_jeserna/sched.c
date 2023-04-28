@@ -64,8 +64,6 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
   int num_ready = process_arrival(current_time, queues, nqueues);
   // Recordar el indice la cola actual
   int current_queue_index;
-  // Tiempo Asignado En la CPU
-  int assigned_time;
   // Buscar la cola que tenga al menos un proceso en estado de listo
   priority_queue *current_queue;
   for (size_t i = 0; i < nqueues; i++)
@@ -82,32 +80,21 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
   // mientras no haya procesos por simular:
   while (n > 0)
   {
-    / Obtener el primer proceso listo en la cola seleccionada.
+    // Obtener el primer proceso listo en la cola seleccionada.
     current_process = (process *)front(current_queue->ready);
     // Quitar el proceso de la cola de listos.
     current_queue->ready = pop_front(current_queue->ready);
-    // Pasar el proceso a ejecuciÃ³n.
+    // Pasar el proceso a ejecución.
     current_process->state = RUNNING;
     // Suponer que al proceso se le puede asignar todo el quantum.
-	
-	// Si es FIFO se le asigna a el proceso todo el timepo de ejecucion
-	if(current_queue->strategy == FIFO){
-		 assigned_time = current_process->execution_time;
-	}else{
-		 assigned_time = current_queue->quantum;
-	}
+    int assigned_time = current_queue->quantum;
     // Si el tiempo restante del proceso es menor al tiempo que se puede asignar, tomar solo el tiempo restante.
-	// Como en FIFO No se necesita el Tiempo Restante No se Usa, Arreglar Este If
-	if(current_queue->strategy != FIFO){
+
     if (current_process->remaining_time < current_queue->quantum)
     {
       assigned_time = current_process->remaining_time;
       printf("Se asigno al proceso %s %d de tiempo\n", current_process->name, assigned_time);
     }
-	}else{
-		printf("Se asigno al proceso %s %d de tiempo\n", current_process->name, assigned_time);
-		
-	}
 
     // Validar SRT:
 
@@ -188,7 +175,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       else
       {
         // Para los demas algoritmos, el nuevo proceso se inserta al final de la cola de listos
-        push_back(current_queue->ready, current_process);
+        push_front(current_queue->ready, current_process);
       }
     }
 
@@ -206,11 +193,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       break;
     }
     // Avanzar a la siguiente cola de prioridad (Usando round robin)
-    current_queue_index++;
-    if (current_queue_index == nqueues)
-    {
-      current_queue_index = 0;
-    }
+    current_queue_index = (current_queue_index+1)%nqueues;
     current_queue = &queues[current_queue_index];
 
     // SRT: Si el proceso que se expropio de la CPU no uso todo el quantum
