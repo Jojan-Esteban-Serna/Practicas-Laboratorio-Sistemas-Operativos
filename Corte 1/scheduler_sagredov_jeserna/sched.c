@@ -175,7 +175,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       else
       {
         // Para los demas algoritmos, el nuevo proceso se inserta al final de la cola de listos
-        push_back(current_queue->ready, current_process);
+        push_front(current_queue->ready, current_process);
       }
     }
 
