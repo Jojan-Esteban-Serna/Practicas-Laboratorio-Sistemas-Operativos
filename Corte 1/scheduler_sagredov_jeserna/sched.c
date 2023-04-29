@@ -141,8 +141,8 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       // Enviar a la cola de listos de su prioridad, de acuerdo con el algoritmo de esa cola.
       if (current_queue->strategy == SJF)
       {
-        // Para SJF y SRT, el proceso se inserta de acuerdo con el tiempo faltante
-        insert_ordered(current_queue->ready, current_process, compare_sjf);
+        // Para SJF se inserta el proceso en el frente porque no se puede expropiar
+        push_front(current_queue->ready, current_process);
       }
       else if (current_queue->strategy == SJF || current_queue->strategy == SRT)
       {
@@ -177,9 +177,15 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     // se debe asignar el tiempo restante del quantum al proceso que llego
     // no se cambia de cola de prioridad!
     // En cualquier otro caso, se pasa a la siguiente cola de prioridad.
-    current_queue_index = (current_queue_index + 1) % nqueues;
-    current_queue = &queues[current_queue_index];
-
+    while (1)
+    {
+      current_queue_index = ((current_queue_index + 1) % nqueues);
+      if (!empty(queues[current_queue_index].ready))
+      {
+        current_queue = &queues[current_queue_index];
+        break;
+      }
+    }
 
     // Si no existen procesos en estado de listos en ninguna cola, avanzar hasta la siguiente llegada (en cualquier cola)
     if (get_ready_count(queues, nqueues) == 0)
@@ -416,12 +422,11 @@ void prepare(list *processes, priority_queue *queues, int nqueues)
     insert_ordered(queues[p->priority].arrival, p, compare_arrival);
   }
 
-  /*
   printf("Prepared queues:\n");
-  for (i=0; i<nqueues; i++) {
+  for (i = 0; i < nqueues; i++)
+  {
     print_queue(&queues[i]);
   }
-  */
 }
 
 int process_arrival(int now, priority_queue *queues, int nqueues)
