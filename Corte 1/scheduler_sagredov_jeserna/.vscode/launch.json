@@ -5,53 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "RR",
+            "name": "1 Cola FIFO",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/main",
-            "args": ["rr.txt"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/test",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "miDebuggerPath": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Habilitar la impresión con sangría para gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "C/C++: gcc compilar proyecto"
-        },
-        {
-            "name": "SRT",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/main",
-            "args": ["srt.txt"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/test",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "miDebuggerPath": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Habilitar la impresión con sangría para gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "C/C++: gcc compilar proyecto"
-        },
-        {
-            "name": "SJF",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/main",
-            "args": ["sjf.txt"],
+            "args": ["1cola_fifo.txt"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/test",
             "environment": [],
@@ -89,11 +47,11 @@
             "preLaunchTask": "C/C++: gcc compilar proyecto"
         },
         {
-            "name": "Round Robin",
+            "name": "Multiples Colas",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/main",
-            "args": ["rr.txt"],
+            "args": ["multiples_colas.txt"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/test",
             "environment": [],
@@ -131,11 +89,11 @@
             "preLaunchTask": "C/C++: gcc compilar proyecto"
         },
         {
-            "name": "Multiples Colas",
+            "name": "RR",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/main",
-            "args": ["multiples_colas.txt"],
+            "args": ["rr.txt"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/test",
             "environment": [],
@@ -150,6 +108,96 @@
                 }
             ],
             "preLaunchTask": "C/C++: gcc compilar proyecto"
-        }
+        },
+        {
+            "name": "SJF",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["sjf.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "SRT Multiple Expropiacion 1",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["srt_multiple_expropiacion_1.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "SRT No Expropiacion",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["srt_no_expropiacion.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "SRT",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["srt.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        
+        
+        
+        
+        
+
     ]
 }

@@ -77,6 +77,9 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
   }
   // proceso_actual = NULO
   current_process = NULL;
+
+  bool there_was_expropiation = false;// Booleano que indica si hubo expropiacion
+  int remaining_quantum_time = 0;
   // mientras no haya procesos por simular:
   while (n > 0)
   {
@@ -87,10 +90,14 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     // Pasar el proceso a ejecución.
     current_process->state = RUNNING;
     // Suponer que al proceso se le puede asignar todo el quantum.
-    int assigned_time = current_queue->quantum;
+    int current_queue_quantum = current_queue->quantum;
+    if(there_was_expropiation){
+      current_queue_quantum = remaining_quantum_time;
+    }
+    int assigned_time = current_queue_quantum;
     // Si el tiempo restante del proceso es menor al tiempo que se puede asignar, tomar solo el tiempo restante.
 
-    if (current_process->remaining_time < current_queue->quantum)
+    if (current_process->remaining_time < current_queue_quantum)
     {
       assigned_time = current_process->remaining_time;
     }
@@ -98,7 +105,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     // Validar SRT:
     // Verificar si llega un proceso a la cola SRT en este quantum y tiene menor tiempo restante (en el momento en el que llega?)
     // Solo dar el tiempo de CPU desde el tiempo actual hasta el tiempo de llegada del nuevo proceso
-    bool there_was_expropiation = false;
+    there_was_expropiation = false;
     if (current_queue->strategy == SRT && !empty(current_queue->arrival))
     {
       // Obtener el primer proceso de la lista de llegadas
@@ -143,6 +150,13 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
 
     // Verificar si el proceso ha finalizado
     // Si el proceso finalizo:
+
+    // Nota: El unico proceso que se ve afectado por no procesar las llegadas antes es Round Robin ya que los procesos que pasan
+    // A listo se insertan al final sin agregar los que llegan, por lo cual se decidio validar eso despues de este if siguiente y de procesar 
+    // Las llegadas, FIFO y SJF no se ven afectadas ya que son no expropiativas y sus procesos sin terminar de ejecutar se pasan
+    // Al frente de la lista de listos, para SRT tampoco ya que se valido su lista de arrivals y se verificaron las expropiaciones
+    // Que pudiesen ocurrir y se pasa a su lista de listos de acuerdo al tiempo restante del proceso que se pasa a listo
+    
     if (current_process->remaining_time == 0)
     {
       // Levar a la lista finished de su cola de prioridad
@@ -212,9 +226,7 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     // se debe asignar el tiempo restante del quantum al proceso que llego
     // no se cambia de cola de prioridad!
     // En cualquier otro caso, se pasa a la siguiente cola de prioridad.
-    if (!(there_was_expropiation && 
-          //!(Hubo expropiacion No se asigno todo el quantum o su tiempo asignado fue menor al tiempo de ejecucion cuando este tiempo de ejecucion era menor al quantum)
-         (assigned_time != current_queue->quantum || (assigned_time < current_process->execution_time) && current_process->execution_time <= current_queue->quantum)))
+    if (!there_was_expropiation)
     {
       int last_index = current_queue_index;
       while (1)
@@ -234,6 +246,10 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
           int num_ready = process_arrival(current_time, queues, nqueues);
         }
       }
+    }else{
+      //Si hubo expropiacion se debe asignar el tiempo restante del quantum al proceso que llegara
+      remaining_quantum_time = current_queue_quantum - assigned_time;
+      //POST: Hay un proceso que llegara al terminar de ejecutarse el expropiado
     }
     // Si no existen procesos en estado de listos en ninguna cola, avanzar hasta la siguiente llegada (en cualquier cola)
     if (get_ready_count(queues, nqueues) == 0)
