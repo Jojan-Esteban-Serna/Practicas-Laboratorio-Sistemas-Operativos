@@ -153,6 +153,8 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
       n--;
       // SRT: Si el proceso finaliza justo cuando llega el otro, pasar a la siguiente cola.
       // En caso contrario, no se debe cambiar de cola de prioridad!
+      // Nota: esto ya lo verifica Validar SRT, esta condicion: (arrived_arrival_time < current_time + assigned_time) hace que
+      // No se le expropie la CPU y there_was_expropiation seria falso
     }
     // Si el proceso no finalizo:
     else
