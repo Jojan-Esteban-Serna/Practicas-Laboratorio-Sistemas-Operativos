@@ -1,0 +1,203 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "1 Cola FIFO",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["1cola_fifo.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "FIFO",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["fifo.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "Multiples Colas",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["multiples_colas.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "Prioridades",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["prioridades.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "RR",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["rr.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "SJF",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["sjf.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "SRT Multiple Expropiacion 1",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["srt_multiple_expropiacion_1.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "SRT No Expropiacion",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["srt_no_expropiacion.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        {
+            "name": "SRT",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/main",
+            "args": ["srt.txt"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc compilar proyecto"
+        },
+        
+        
+        
+        
+        
+
+    ]
+}
