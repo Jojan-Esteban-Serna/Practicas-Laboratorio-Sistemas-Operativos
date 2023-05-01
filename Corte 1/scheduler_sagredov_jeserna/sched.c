@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdbool.h>
 #include "sched.h"
 
 /**
@@ -96,14 +96,35 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     }
 
     // Validar SRT:
-    // Verificar si llega un proceso a la cola SRT en este quantum y tiene menor tiempo restante
+    // Verificar si llega un proceso a la cola SRT en este quantum y tiene menor tiempo restante (en el momento en el que llega?)
     // Solo dar el tiempo de CPU desde el tiempo actual hasta el tiempo de llegada del nuevo proceso
+    bool there_was_expropiation = false;
+    if (current_queue->strategy == SRT && !empty(current_queue->arrival))
+    {
+      // Obtener el primer proceso de la lista de llegadas
+      process *arrived_srt_process = front(current_queue->arrival);
+      int arrived_arrival_time = arrived_srt_process->arrival_time;
+      // Verificar si llega en el tiempo asignado de ejecucion
+      if (arrived_arrival_time > current_time && arrived_arrival_time < current_time + assigned_time)
+      {
+        // Obtener el tiempo que llevaria ejecutandose hasta que llega el proceso
+        int executed_time_at_arrival = arrived_arrival_time - current_time;
+        // Obtener el tiempo que le queda cuando llega el nuevo proceso
+        int remaining_time_at_arrival = current_process->remaining_time - executed_time_at_arrival;
+        // Verificar si cuando llega el siguiente proceso este tiene menor tiempo restante de ejecucion (expropiar si es el caso)
+        if (arrived_srt_process->remaining_time < remaining_time_at_arrival)
+        {
+          assigned_time = executed_time_at_arrival;
+          there_was_expropiation = true;
+          // POST: Hay un proceso que va a expropiar al proceso actual cuando este termine su tiempo asignado no se avanzara de cola
+        }
+      }
+    }
     //  Si se dio CPU al proceso:
     if (assigned_time > 0)
     {
       // Actualizar el tiempo de uso de CPU del proceso
-
-      current_process->cpu_time = assigned_time;
+      current_process->cpu_time += assigned_time;
       // Disminuir el tiempo restante en el tiempo de CPU dado
       current_process->remaining_time -= assigned_time;
       // Aumentar el tiempo de espera de los demas procesos
@@ -154,12 +175,13 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
         // Para FIFO se inserta al frente ya que no se puede expropiar
         push_front(current_queue->ready, current_process);
       }
-      else
+      /*else
       {
-        
+        // Para round robin, procesar los procesos que llegan en ese quantum, ya que si se manda al final el
+        // Proceso que se estaba ejecutando, la lista no conservara el orden de llegada
         process_arrival(current_time + assigned_time, queues, nqueues);
         push_back(current_queue->ready, current_process);
-      }
+      }*/
     }
 
     // Fin si
@@ -168,33 +190,49 @@ void schedule(list *processes, priority_queue *queues, int nqueues)
     current_time += assigned_time;
     // Procesar las llegadas de nuevos procesos al tiempo actual.
     int num_ready = process_arrival(current_time, queues, nqueues);
-
+    
+    // Para round robin los procesos deben ir hacia al final de la cola de listos despues de procesar las llegadas (no antes),
+    // ya que si no se procesan los procesos que llegaron durante ese tiempo de ejecucion el proceso que pasa a listo quedara
+    // en frente de los procesos que llegaron mientras se ejecutaba y no al final, esto llevaria a que  en el siguiete ciclo
+    // se le de la cpu antes
+    if(current_process->remaining_time> 0 && current_queue->strategy == RR){
+      push_back(current_queue->ready,current_process);
+    }
     // Terminar si ya no existen procesos por planificar.
     if (n == 0)
     {
       break;
     }
+    //POST: Quedan procesos, por lo que para el proximo ciclo infinito se garantiza que se va a romper 
+
     // Avanzar a la siguiente cola de prioridad (Usando round robin)
     // SRT: Si el proceso que se expropio de la CPU no uso todo el quantum
     // se debe asignar el tiempo restante del quantum al proceso que llego
     // no se cambia de cola de prioridad!
     // En cualquier otro caso, se pasa a la siguiente cola de prioridad.
-    int last_index = current_queue_index;
-    while (1)
+    if (!(there_was_expropiation && 
+          //!(Hubo expropiacion No se asigno todo el quantum o su tiempo asignado fue menor al tiempo de ejecucion cuando este tiempo de ejecucion era menor al quantum)
+         (assigned_time != current_queue->quantum || (assigned_time < current_process->execution_time) && current_process->execution_time <= current_queue->quantum)))
     {
-      current_queue_index = ((current_queue_index + 1) % nqueues);
-      if (!empty(queues[current_queue_index].ready))
+      int last_index = current_queue_index;
+      while (1)
       {
-        current_queue = &queues[current_queue_index];
-        break;
-      }
-    // Si no existen procesos en estado de listos en ninguna cola, avanzar hasta la siguiente llegada (en cualquier cola)
-      if(last_index == current_queue_index){
-        current_time = get_next_arrival(queues, nqueues);
-        int num_ready = process_arrival(current_time, queues, nqueues);
+        current_queue_index = ((current_queue_index + 1) % nqueues);
+        if (!empty(queues[current_queue_index].ready))
+        {
+          // Cola con llegadas de listos
+          current_queue = &queues[current_queue_index];
+          break;
+        }
+        // Si no existen procesos en estado de listos en ninguna cola (Si ya se dio una vuelta y las listas de listo estaban vacias)
+        // avanzar hasta la siguiente llegada (en cualquier cola)
+        if (last_index == current_queue_index)
+        {
+          current_time = get_next_arrival(queues, nqueues);
+          int num_ready = process_arrival(current_time, queues, nqueues);
+        }
       }
     }
-
     // Si no existen procesos en estado de listos en ninguna cola, avanzar hasta la siguiente llegada (en cualquier cola)
     if (get_ready_count(queues, nqueues) == 0)
     {
