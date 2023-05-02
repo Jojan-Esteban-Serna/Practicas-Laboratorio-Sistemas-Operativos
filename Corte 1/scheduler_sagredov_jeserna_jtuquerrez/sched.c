@@ -2,8 +2,8 @@
  * @file
  * @brief Planificación de procesos
  * @author Erwin Meza Vega <emezav@unicauca.edu.co>
- * @author Jojan Esteban Serna Serna <jeserna@unicauca.edu.co>
  * @author Santiago Agredo Vallejo <sagredov@unicauca.edu.co>
+ * @author Jojan Esteban Serna Serna <jeserna@unicauca.edu.co>
  * @author Joan Sebastian Tuquerrez Gomez <jtuquerrez@unicauca.edu.co>
  */
 
