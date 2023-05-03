@@ -11,3 +11,6 @@ Corte 1/scheduler_sagredov_jeserna/main
 Corte 1/scheduler_sagredov_jeserna/main
 *.gpi
 Corte 1/scheduler_sagredov_jeserna/main
+Corte 1/lab_sincronizacion_jeserna/philosophers
+.gitignore
+Corte 1/lab_sincronizacion_jeserna/prodcons
