@@ -3,16 +3,21 @@
 #include <stdlib.h>
 #include <semaphore.h>
 #include <unistd.h>
+#include <time.h>
 /**
  * @brief Definicion del tipo semaforo
  *
  */
 typedef sem_t semaphore;
 
-#define N 10 // TODO: tamaño del buffer por linea de comando
-semaphore mutex; //Se inicializan con sem_init
-semaphore empty;//Se inicializan con sem_init
-semaphore full;//Se inicializan con sem_init
+semaphore mutex; // Se inicializan con sem_init
+semaphore empty; // Se inicializan con sem_init
+semaphore full;  // Se inicializan con sem_init
+int *buffer;     // Buffer de productos
+int n;           // Tamaño del buffer
+
+int head = 0; // Cabeza de la lista circular
+int tail = 0; // Cola de la lista circular
 /**
  * @brief Alias para sem_wait
  *
@@ -42,7 +47,6 @@ void *producer(void *arg);
  */
 void *consumer(void *arg);
 
-
 /**
  * @brief Produce un nuevo item
  *
@@ -63,7 +67,12 @@ void insert_item(int item);
  * @return int Item obtenido
  */
 int remove_item();
-
+/**
+ * @brief Imprime el buffer circular, señalando el inicio y el final con `|`
+ * 
+ * @param buffer Buffer a imprimir
+ */
+void print_circular_buffer(int *buffer);
 /**
  * @brief Consume un item
  *
@@ -79,57 +88,91 @@ int finished;
 
 int main(int argc, char const *argv[])
 {
-    pthread_t t_prod, t_cons;//Identificadores de hilos
 
+    pthread_t t_prod, t_cons; // Identificadores de hilos
+
+    time_t t;
+    srand((unsigned)time(&t)); // Semilla con el tiempo
+
+    finished = 0;
+    while (n <= 0)
+    {
+        // Nota: Si se hace "./prodcons > out.txt", el siguiente mensaje no se mostrara
+        // Pero si leera por teclado lo que se ingrese
+        printf("Ingrese el tamaño del buffer\n>");
+        scanf("%d", &n);
+    }
     // Inicializar los semaforos
     sem_init(&mutex, 0, 1);
-    sem_init(&empty, 0, N);
+    sem_init(&empty, 0, n);
     sem_init(&full, 0, 0);
-    finished = 0;
+    buffer = (int *)calloc(n, sizeof(int));
     // Crear el hilo productor
     pthread_create(&t_prod, NULL, producer, NULL);
 
     // Crear el hilo consumidor
     pthread_create(&t_cons, NULL, consumer, NULL);
 
-    // Dormir durante 10 segundos para dar tiempo a que se ejecuten los hilos
+    // Dormir durante 2 segundos para dar tiempo a que se ejecuten los hilos
     sleep(2);
 
-    //Notificar que se debe terminar
+    // Notificar que se debe terminar
     finished = 1;
 
-    //Esperar que los hilos terminen
+    // Esperar que los hilos terminen
     pthread_join(t_prod, NULL);
     pthread_join(t_cons, NULL);
 
+    // Liberar la memoria del buffer
+    free(buffer);
     exit(EXIT_SUCCESS);
 }
 
 int produce_item()
 {
-    printf(" P ");
+
+    int item = n + rand() % n * n;
+    printf(" Produced: %d\n", item);
     fflush(stdout);
-    usleep(rand()%1000);
-    return -1;
+    usleep(rand() % 1000);
+    return item;
 }
 
 void insert_item(int item)
 {
-    printf(" I ");
+    buffer[head] = item;
+    head = (head + 1) % n;
+    printf(" Inserted: %d \n", item);
+    print_circular_buffer(buffer);
     fflush(stdout);
 }
 int remove_item()
 {
-    printf(" R ");
+    int item = buffer[tail];
+    buffer[tail] = 0;
+    tail = (tail + 1) % n;
+    printf(" Removed: %d \n", item);
     fflush(stdout);
-    return -1;
+    return item;
+}
+void print_circular_buffer(int *buffer)
+{
+    printf("[");
+    for (size_t i = 0; i < n; i++)
+    {
+        if (i == tail || i == head)
+        {
+            printf("|");
+        }
+        printf(" %d ", buffer[i]);
+    }
+    printf("]\n");
 }
 void consume_item(int item)
 {
-    printf(" C ");
+    printf(" Consumed: %d \n", item);
     fflush(stdout);
-    usleep(rand()%1000);
-
+    usleep(rand() % 1000);
 }
 void *producer(void *arg)
 {

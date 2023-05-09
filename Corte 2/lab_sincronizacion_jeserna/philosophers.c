@@ -26,12 +26,30 @@ typedef sem_t semaphore;
 
 int n;
 /**
+ * @brief Indice de la izquierda de i (en recorrido circular)
+ *
+ */
+#define LEFT(i) (i - 1 + n) % n
+/**
+ * @brief Indice de la derecha de i (en recorrido circular)
+ *
+ */
+#define RIGHT(i) (i + 1) % n
+/**
  * @brief Bandera para indicar el fin de
  *
  */
 int finished;
-
+/**
+ * @brief Mutex
+ *
+ */
 semaphore mutex; // Se inicializan con sem_init
+/**
+ * @brief Arreglo de semaforos
+ *
+ */
+semaphore *semaphores;
 
 /**
  * @brief Definicion del tipo semaforo
@@ -43,12 +61,18 @@ typedef sem_t semaphore;
  * @brief Estado de un filosofo
  *
  */
-enum State
+typedef enum
 {
     HUNGRY,
     THINKING,
     EATING
-};
+} State;
+
+/**
+ * @brief Arreglo de estados
+ *
+ */
+State *state;
 
 /**
  * @brief Hilo de filosofos
@@ -80,16 +104,11 @@ void test(int i);
 
 int main(int argc, char const *argv[])
 {
-    pthread_t *t; // Arreglo de filosofos
-    int *ids;     // Arreglo de identificadores de filosofos
-    n = 0;        // Numero de filosofos
+    pthread_t *philosophers; // Arreglo de filosofos
+    int *ids;                // Arreglo de identificadores de filosofos
+    n = 0;                   // Numero de filosofos
     sem_init(&mutex, 0, 1);
 
-    // Validar la cantidad de filosofos
-    if (argc == 2)
-    {
-        n = atoi(argv[1]);
-    }
     while (n < 2)
     {
         printf("Ingrese la cantidad de filosofos:");
@@ -97,16 +116,30 @@ int main(int argc, char const *argv[])
     }
     finished = 0;
     // Reservar memoria para el arreglo de hilos
-    t = (pthread_t *)malloc(n * sizeof(pthread_t));
+    philosophers = (pthread_t *)malloc(n * sizeof(pthread_t));
 
     // Reservar memoria para el arreglo de identificadores
     ids = (int *)malloc(n * sizeof(int));
+
+    // Reservar memoria para el arreglo de semaforos
+    semaphores = (semaphore *)malloc(n * sizeof(semaphore));
+
+    // Reservar memoria para el arreglo de estados
+    state = (State *)malloc(n * sizeof(State));
+
+    
+    // Inicializar los semaforos en cero y los estados en thinking
+    for (size_t i = 0; i < n; i++)
+    {
+        sem_init(&semaphores[i], 0, 0);
+        state[i] = THINKING;
+    }
 
     // Crear los hilos
     for (int i = 0; i < n; i++)
     {
         ids[i] = i;
-        pthread_create(&t[i], NULL, philosopher, (void *)&ids[i]);
+        pthread_create(&philosophers[i], NULL, philosopher, (void *)&ids[i]);
     }
     sleep(5);
     // Indicar que la simulacion termino
@@ -115,9 +148,13 @@ int main(int argc, char const *argv[])
     // Esperar que los hilos terminen
     for (int i = 0; i < n; i++)
     {
-        pthread_join(t[i], NULL);
+        pthread_join(philosophers[i], NULL);
     }
-
+    // Liberar memoria de los arreglos creados dinamicamente
+    free(philosophers);
+    free(ids);
+    free(semaphores);
+    free(state);
     exit(EXIT_SUCCESS);
 }
 
@@ -129,11 +166,10 @@ void *philosopher(void *arg)
     printf("Philosopher %d started\n", i);
     while (!finished)
     {
-        down(&mutex);
-        state[i] = HUNGRY;
-        test(i);
-        up(&mutex);
-        down(&s[i]);
+        think();
+        take_forks(i);
+        eat();
+        put_forks(i);
     }
     printf("Philosopher %d finished\n", i);
 }
@@ -144,21 +180,21 @@ void take_forks(int i)
     state[i] = HUNGRY;
     test(i);
     up(&mutex);
-    down(&s[i]);
+    down(&semaphores[i]);
 }
 void put_forks(int i)
 {
     down(&mutex);
     state[i] = THINKING;
-    test(LEFT);
-    test(RIGHT);
+    test(LEFT(i));
+    test(RIGHT(i));
     up(&mutex);
 }
 void test(int i)
 {
-    if (state[i] == HUNGRY && state[LEFT] != EATING && state[RIGHT] != EATING)
+    if (state[i] == HUNGRY && state[LEFT(i)] != EATING && state[RIGHT(i)] != EATING)
     {
         state[i] = EATING;
-        up(&s[i]);
+        up(&semaphores[i]);
     }
 }
