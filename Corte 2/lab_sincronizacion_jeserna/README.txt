@@ -23,4 +23,5 @@ menciona lo siguiente para la solucion de el problema de los filósofos
                         0 would starve.
                         So, Tanenbaum’s solution doesn’t satisfy all the requirements."
 
-Se evidencio que esto si ocurrio.
+Se evidencio que esto si ocurrio, por lo cual se hizo yield a el hilo despues de que pasara a estado de thinking luego de comer y antes de que desbloqueara el mutex
+para que no volviese a tomar los tenedores y permitiese que otro que tuviese hambre los tomara, de esta forma no se mueren de hambre ni se toman los tenedores seguidamente
