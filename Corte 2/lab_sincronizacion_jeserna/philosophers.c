@@ -29,7 +29,7 @@ int n;
  * @brief Indice de la izquierda de i (en recorrido circular)
  *
  */
-#define LEFT(i) (i - 1 + n) % n
+#define LEFT(i) ((i - 1) + n) % n
 /**
  * @brief Indice de la derecha de i (en recorrido circular)
  *
@@ -200,7 +200,6 @@ void take_forks(int i)
 {
     down(&mutex);
     state[i] = HUNGRY;
-    print_states(state, n);
     test(i);
     up(&mutex);
     down(&semaphores[i]);
@@ -209,7 +208,6 @@ void put_forks(int i)
 {
     down(&mutex);
     state[i] = THINKING;
-    print_states(state, n);
     test(LEFT(i));
     test(RIGHT(i));
     up(&mutex);
@@ -219,7 +217,6 @@ void test(int i)
     if (state[i] == HUNGRY && state[LEFT(i)] != EATING && state[RIGHT(i)] != EATING)
     {
         state[i] = EATING;
-        print_states(state, n);
         up(&semaphores[i]);
     }
 }
@@ -227,11 +224,15 @@ void test(int i)
 void think(int i)
 {
     printf("Philosopher %d is thinking\n", i);
+    print_states(state, n);
+
     fflush(stdout);
 }
 void eat(int i)
 {
     printf("Philosopher %d is eating\n", i);
+    print_states(state, n);
+
     fflush(stdout);
 }
 
@@ -258,4 +259,5 @@ void print_states(State *states, int n)
         }
     }
     printf("]\n");
+    fflush(stdout);
 }
