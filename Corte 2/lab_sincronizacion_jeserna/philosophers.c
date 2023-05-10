@@ -61,7 +61,7 @@ typedef sem_t semaphore;
  * @brief Estado de un filosofo
  *
  */
-typedef enum
+typedef enum State
 {
     HUNGRY,
     THINKING,
