@@ -216,7 +216,8 @@ void put_forks(int i)
     // inappropriately (e.g., when resources needed by other schedulable
     // threads are still held by the caller), since doing so will result
     // in unnecessary context switches, which will degrade system
-    // performance, pero no supone un riesgo ya que esto ayuda a que el que se planifique antes no sea el que pone los tenedores sino otro hilo
+    // performance, pero no supone un riesgo ya que esto ayuda a que el que se planifique antes no sea el que pone los tenedores sino otro hilo que no debe recorrer mas 
+    // instrucciones para llegar a su seccion critica
     up(&mutex);
 }
 void test(int i)
