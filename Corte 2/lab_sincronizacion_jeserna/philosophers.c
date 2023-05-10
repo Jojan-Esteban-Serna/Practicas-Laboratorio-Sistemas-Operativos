@@ -211,12 +211,12 @@ void put_forks(int i)
     test(LEFT(i));
     test(RIGHT(i));
     sched_yield(); // Se puso aqui porque despues de test pueden haber semaforos liberados
-    // la cpu se le dara a otros procesos y quedaran bloqueados en su seccion critica, luego volvera a el hilo que hizo yield
-    // y cuando se libere el mutex otro de los procesos (no el) sera planificado (antes que el), el manual decia: Avoid calling sched_yield() unnecessarily or
+    // la cpu se le dara a otros hilos y quedaran bloqueados en su seccion critica, luego volvera a el hilo que hizo yield
+    // y cuando se libere el mutex otro de los hilos (no el) sera planificado (antes que el), el manual decia: Avoid calling sched_yield() unnecessarily or
     // inappropriately (e.g., when resources needed by other schedulable
     // threads are still held by the caller), since doing so will result
     // in unnecessary context switches, which will degrade system
-    // performance, pero no supone un riesgo ya que esto ayuda a que el que se planifique antes no sea el que pone los tenedores sino otro proceso
+    // performance, pero no supone un riesgo ya que esto ayuda a que el que se planifique antes no sea el que pone los tenedores sino otro hilo
     up(&mutex);
 }
 void test(int i)
