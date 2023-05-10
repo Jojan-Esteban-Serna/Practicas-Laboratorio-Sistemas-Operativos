@@ -102,6 +102,26 @@ void put_forks(int i);
  */
 void test(int i);
 
+/**
+ * @brief Funcion llamada mientras se piensa
+ *
+ * @param i Indice del filosofo que piensa
+ */
+void think(int i);
+/**
+ * @brief Funcion llamada mientras se come
+ *
+ * @param i Indice del filosofo pensante
+ */
+void eat(int i);
+
+/**
+ * @brief Imprime el arreglo de estados (Sirve para comprobar que no pueden haber filosofos adyacentes comiendo)
+ *
+ * @param states Arreglo de estados
+ * @param n tamaño del arreglo
+ */
+void print_states(State *states, int n);
 int main(int argc, char const *argv[])
 {
     pthread_t *philosophers; // Arreglo de filosofos
@@ -127,14 +147,13 @@ int main(int argc, char const *argv[])
     // Reservar memoria para el arreglo de estados
     state = (State *)malloc(n * sizeof(State));
 
-    
     // Inicializar los semaforos en cero y los estados en thinking
     for (size_t i = 0; i < n; i++)
     {
         sem_init(&semaphores[i], 0, 0);
         state[i] = THINKING;
     }
-
+    print_states(state, n);
     // Crear los hilos
     for (int i = 0; i < n; i++)
     {
@@ -164,20 +183,24 @@ void *philosopher(void *arg)
 
     i = *(int *)arg;
     printf("Philosopher %d started\n", i);
+    fflush(stdout);
+
     while (!finished)
     {
-        think();
+        think(i);
         take_forks(i);
-        eat();
+        eat(i);
         put_forks(i);
     }
     printf("Philosopher %d finished\n", i);
+    fflush(stdout);
 }
 
 void take_forks(int i)
 {
     down(&mutex);
     state[i] = HUNGRY;
+    print_states(state, n);
     test(i);
     up(&mutex);
     down(&semaphores[i]);
@@ -186,6 +209,7 @@ void put_forks(int i)
 {
     down(&mutex);
     state[i] = THINKING;
+    print_states(state, n);
     test(LEFT(i));
     test(RIGHT(i));
     up(&mutex);
@@ -195,6 +219,43 @@ void test(int i)
     if (state[i] == HUNGRY && state[LEFT(i)] != EATING && state[RIGHT(i)] != EATING)
     {
         state[i] = EATING;
+        print_states(state, n);
         up(&semaphores[i]);
     }
+}
+
+void think(int i)
+{
+    printf("Philosopher %d is thinking\n", i);
+    fflush(stdout);
+}
+void eat(int i)
+{
+    printf("Philosopher %d is eating\n", i);
+    fflush(stdout);
+}
+
+void print_states(State *states, int n)
+{
+    printf("[");
+    for (size_t i = 0; i < n; i++)
+    {
+        switch (states[i])
+        {
+        case THINKING:
+            printf(" T "); // Significa thinking (Pensando)
+            break;
+        case HUNGRY:
+            printf(" H "); // Significa hungry (Hambriento)
+            break;
+
+        case EATING:
+            printf(" E "); // Significa eating (Comiendo)
+            break;
+
+        default:
+            break;
+        }
+    }
+    printf("]\n");
 }

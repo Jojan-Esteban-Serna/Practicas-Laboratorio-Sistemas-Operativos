@@ -152,6 +152,8 @@ int remove_item()
     buffer[tail] = 0;
     tail = (tail + 1) % n;
     printf(" Removed: %d \n", item);
+    print_circular_buffer(buffer);
+
     fflush(stdout);
     return item;
 }
