@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
 			off_t file_size = stat_buffer.st_size;
 
 			// Construir el encabezado
-			char header_response[BUFSIZ];
+			
 			time_t current_time;
 			time(&current_time);
 			char success_response[BUFSIZ];
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
 				finished = 1;
 				continue;
 			}
-			// leer el archivo en bloques de BUFSIZ desde donde termina el encabezado
+			// leer el archivo en el final del header, la cantidad que lee es el espacio que queda en el buffer
 			nread = fread(success_response + headr_size, sizeof(char), remaining_space, file_to_send);
 			if (nread < 0)
 			{
@@ -226,34 +226,37 @@ int main(int argc, char *argv[])
 				continue;
 			}
 			// enviar el primer bloque
-			nwritten = write(client_socketfd, success_response, strlen(success_response));
+			nwritten = write(client_socketfd, success_response, BUFSIZ);
 			if (nwritten < 0)
 			{
 				finished = 1;
 				continue;
 			}
-			printf("written the first %d bytes\n", nwritten);
-			char file_buffer[BUFSIZ];
+			printf("written the first %d bytes in the client socket\n", nwritten);
 			// Leer el archivo en bloques de BUFSIZ mientras haya datos
+			//Si el tamaño del archivo es mayor al tamaño del buffer menos el tamaño del encabezado
+			//enviar el archivo en bloques de BUFSIZ
 			if (file_size > BUFSIZ - headr_size)
 			{
-				while (nread = fread(file_buffer, sizeof(char), BUFSIZ, file_to_send) > 0)
+				//mientras haya datos en el archivo por leer y no se haya terminado de enviar
+				//el archivo al cliente enviar el archivo en bloques de BUFSIZ
+				while ((nread = fread(success_response, sizeof(char), BUFSIZ, file_to_send)) > 0)
 				{
-					printf("read %d bytes\n", nread);
-					// escrbir el bloque en el socket
-					//  Enviar el contenido del archivo
-
-					nwritten = write(client_socketfd, file_buffer, nread);
+					printf("read %d bytes from file\n", nread);
+					//enviar el bloque leido al cliente y verificar que se haya enviado correctamente
+					nwritten = write(client_socketfd, success_response, nread);
+					//si no se envio correctamente terminar
 					if (nwritten < 0)
 					{
 						finished = 1;
-						break;
+						continue;
 					}
 					printf("written %d bytes\n", nwritten);
 				}
 			}else{
 				finished = 1;
 			}
+			fclose(file_to_send);
 			// Cerrar la conexion y terminar el hilo
 		}
 	}

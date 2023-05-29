@@ -158,14 +158,20 @@ int main(int argc, char *argv[])
 				continue;
 			}
 			printf("Opened file\n");
-			// escribir el contenido del archivo se agregara al final
+			// Escribir el primer bloque del archivo desde donde termina el encabezado
 			fprintf(file, "%s", file_content);
 			printf("Saved the first block\n");
 			// leer el resto del archivo del servidor y escribirlo en el archivo local
-			while (nread = read(server_socketfd, server_read_buf, BUFSIZ) > 0)
+			while ((nread = read(server_socketfd, server_read_buf, BUFSIZ) )> 0)
 			{
+				printf("Readed %d bytes from the server socket\n", nread);
 				// escribir el contenido del archivo se agregara al final
-				fwrite(server_read_buf, 1, nread, file);
+				nwritten = fwrite(server_read_buf, 1, nread, file);
+				if(nwritten < 0){
+					finished = 1;
+					continue;
+				}
+				printf("Writed %d bytes to the file\n", nwritten);
 			}
 
 			fclose(file);
