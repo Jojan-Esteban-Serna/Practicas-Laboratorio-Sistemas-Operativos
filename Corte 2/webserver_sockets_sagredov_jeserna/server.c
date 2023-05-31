@@ -164,6 +164,10 @@ int main(int argc, char *argv[])
 				time_t current_time;
 				time(&current_time);
 
+				printf("%lu\n", current_time);
+
+				printf("%s\n", asctime(localtime(&current_time)));
+
 				// Convert the time to a string representation
 				char *time_string = ctime(&current_time);
 
