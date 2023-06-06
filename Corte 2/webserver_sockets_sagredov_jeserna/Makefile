@@ -1,4 +1,4 @@
-all: server.o client.o split.o util.o
+all: server.o client.o split.o util.o 
 	gcc -o server server.o split.o util.o -pthread
 	gcc -o client client.o split.o util.o -pthread
 
@@ -13,6 +13,7 @@ split.o: split.c
 
 util.o: util.c
 	gcc -c -o util.o util.c
+
 
 doc:
 	doxygen

@@ -21,6 +21,7 @@
 #endif
 #include "util.h"
 
+#define BUFSIZ 8192
 /**
  * @brief Manejador de señales.
  * @param num Numero de la señal recibida
@@ -28,11 +29,28 @@
  */
 void signal_handler(int num);
 
+/**
+ * @brief 	Envia un mensaje de error al usuario con el uso correcto del programa
+ * 
+ */
+void usage();
 /** @brief Controla la ejecucion del servidor */
 int finished = 0;
 
 int main(int argc, char *argv[])
 {
+
+	if(argc != 3){
+		usage();
+		exit(EXIT_FAILURE);
+	}
+	char* ipdir = argv[1];
+	int port = atoi(argv[2]);
+	if(port == 0){
+		printf("Invalid port number\n");
+		exit(EXIT_FAILURE);
+	}
+
 
 	// Socket del servidor
 	int server_socketfd;
@@ -82,8 +100,8 @@ int main(int argc, char *argv[])
 	// Inicializar la direccion antes de conectarse
 	memset(&addr, 0, sizeof(struct sockaddr_in));
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(1234); // TODO argumento de linea de comandos!!!
-	if (inet_aton("127.0.0.1", &addr.sin_addr) != 1)
+	addr.sin_port = htons(port); // TODO argumento de linea de comandos!!!
+	if (inet_aton(ipdir, &addr.sin_addr) != 1)
 	{ // Conectarse a la direction TODO del servidor
 		fprintf(stderr, "Unable to parse the address\n");
 		exit(EXIT_FAILURE);
@@ -147,9 +165,9 @@ int main(int argc, char *argv[])
 			if(access(folder_name, F_OK) == -1){
 				//Se crea el directorio files
 				mkdir(folder_name, 0700);
-				printf("Created folder\n");
+				//printf("Created folder\n");
 			}
-			printf("Checked folder\n");
+			//printf("Checked folder\n");
 			// abrir el archivo (se crea si no existe), se abre en modo append
 			FILE *file = fopen(file_path, "a+");
 			if (file == NULL)
@@ -157,21 +175,21 @@ int main(int argc, char *argv[])
 				perror("fopen");
 				continue;
 			}
-			printf("Opened file\n");
+			//printf("Opened file\n");
 			// Escribir el primer bloque del archivo desde donde termina el encabezado
 			fprintf(file, "%s", file_content);
-			printf("Saved the first block\n");
+			//printf("Saved the first block\n");
 			// leer el resto del archivo del servidor y escribirlo en el archivo local
 			while ((nread = read(server_socketfd, server_read_buf, BUFSIZ) )> 0)
 			{
-				printf("Readed %d bytes from the server socket\n", nread);
+				//printf("Readed %d bytes from the server socket\n", nread);
 				// escribir el contenido del archivo se agregara al final
 				nwritten = fwrite(server_read_buf, 1, nread, file);
 				if(nwritten < 0){
 					finished = 1;
 					continue;
 				}
-				printf("Writed %d bytes to the file\n", nwritten);
+				//printf("Writed %d bytes to the file\n", nwritten);
 			}
 
 			fclose(file);
@@ -191,4 +209,10 @@ void signal_handler(int num)
 {
 	printf("Signal %d received\n", num);
 	finished = 1;
+}
+
+
+void usage(){
+	printf("Usage: ./client <server_ip> <server_port>\n");
+	exit(EXIT_FAILURE);
 }
