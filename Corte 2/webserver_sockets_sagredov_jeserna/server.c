@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		usage();
-		return;
+		exit(EXIT_FAILURE);
 	}
 	// Socket del servidor
 	int s;
@@ -209,8 +209,8 @@ void *serve_client(void *arg)
 		char *filename = parts->parts[1];
 		char path[BUFSIZ];
 		sprintf(path, "www%s", filename);
-		//printf("Archivo solicitado: %s\n", path);
-		//  Buscar el archivo dentro del subdirectorio con (stat) www/
+		// printf("Archivo solicitado: %s\n", path);
+		//   Buscar el archivo dentro del subdirectorio con (stat) www/
 		struct stat stat_buffer;
 		int stat_result = stat(path, &stat_buffer);
 		if (stat_result < 0)
