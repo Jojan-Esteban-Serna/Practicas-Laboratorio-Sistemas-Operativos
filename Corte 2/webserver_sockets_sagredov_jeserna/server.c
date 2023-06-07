@@ -246,7 +246,7 @@ void *serve_client(void *arg)
 					"X-Powered-By: OS HTTP Server\n"
 					"Content-Type: text/html; charset=utf-8\n"
 					"Content-Length: %d\n"
-					"Date: %s\n"
+					"Date: %s"
 					"Connection: close",
 					strlen(html_not_found_response), time_string);
 
