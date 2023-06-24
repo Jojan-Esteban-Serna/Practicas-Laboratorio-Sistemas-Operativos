@@ -13,7 +13,8 @@ void print_partition_entry(PartitionEntry *partition_entry)
     print_size((long double)((long double)partition_entry->partition_size * 512));
     // Imprimir el codigo de particion
     char hexstring[8];
-    sprintf(hexstring, "%X00", partition_entry->partition_type);
+    unsigned char partition_type = partition_entry->partition_type;
+    sprintf(hexstring, "%s%X00", partition_type < 0x10 ? "0" : "", partition_type);
     printf("%-16s", hexstring);
     // Imprimir el nombre de la particion
     initialize_partition_names();
