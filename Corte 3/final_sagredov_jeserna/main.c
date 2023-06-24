@@ -32,7 +32,11 @@ int main(int argc, char *argv[])
 		printf("Error al cargar el struct desde el archivo\n");
 		exit(EXIT_FAILURE);
 	}
-
+	if(mpt.signatur != 0xAA55)
+	{
+		printf("Error: No se encontro la firma 0xAA55\n");
+		exit(EXIT_FAILURE);
+	}
 	print_mpt(&mpt);
 
 	exit(EXIT_SUCCESS);
