@@ -1,5 +1,5 @@
-all: disk_image main.o
-	gcc -o hdisk main.o
+all: disk_image main.o util.o mpt.o
+	gcc -o hdisk main.o util.o mpt.o
 
 test: all
 	./hdisk mbr_disk_0
@@ -9,10 +9,16 @@ test: all
 disk_image:
 	sudo dd if=/dev/sda of=mbr_disk_0 bs=512 count=1
 	sudo dd if=/dev/sdb of=mbr_disk_1 bs=512 count=1
-	sudo chown jojan.jojan mbr_disk_0 mbr_disk_1
+	sudo chown ingesis.ingesis mbr_disk_0 mbr_disk_1
 
 main.o: main.c
 	gcc -c -o main.o main.c
+
+util.o: util.c
+	gcc -c -o util.o util.c
+
+mpt.o: mpt.c
+	gcc -c -o mpt.o mpt.c
 
 doc:
 	doxygen
