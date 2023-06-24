@@ -37,7 +37,7 @@ int read_struct_from_file(char *filename, void *struct_ptr, int struct_size, int
 
 void print_size(long double size)
 {
-    const char *units[] = {"bytes", "KB", "MB", "GB","TB","PB","EB","ZB","YB","RB","QB"};
+    const char *units[] = {"bytes", "KiB", "MiB", "GiB","TiB","PiB","EiB","ZiB","YiB","RiB","QiB"};
     int index = 0;
 
     while (size >= 1024 && index < 10)
@@ -45,6 +45,7 @@ void print_size(long double size)
         size /= 1024;
         index++;
     }
-
-    printf("%.2Lf %s\n", size, units[index]);
+    char formatted[20];
+    sprintf(formatted, "%.2Lf %s", size, units[index]);
+    printf("%-16s",formatted);
 }

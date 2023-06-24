@@ -25,5 +25,17 @@ typedef struct
     unsigned short signature;         /*!< 0xAA55 Boot record signature*/
 } MPT;
 #pragma pack(pop)
+/**
+ * @brief Imprime una entrada de la tabla de particiones
+ * 
+ * @param partition_entry  Entrada de la tabla de particiones
+ */
+void print_partition_entry(PartitionEntry *partition_entry);
 
+/**
+ * @brief Imprime la tabla de particiones
+ * 
+ * @param mpt Tabla de particiones
+ */
+void print_mpt(MPT *mpt);
 #endif // MPT_H

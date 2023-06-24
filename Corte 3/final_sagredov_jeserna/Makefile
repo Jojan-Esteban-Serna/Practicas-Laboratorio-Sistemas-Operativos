@@ -1,5 +1,5 @@
-all: disk_image main.o util.o mpt.o
-	gcc -o hdisk main.o util.o mpt.o
+all: disk_image main.o util.o mpt.o partition_names.o
+	gcc -o hdisk main.o util.o mpt.o partition_names.o
 
 test: all
 	./hdisk mbr_disk_0
@@ -19,6 +19,9 @@ util.o: util.c
 
 mpt.o: mpt.c
 	gcc -c -o mpt.o mpt.c
+
+partition_names.o: partition_names.c
+	gcc -c -o partition_names.o partition_names.c
 
 doc:
 	doxygen

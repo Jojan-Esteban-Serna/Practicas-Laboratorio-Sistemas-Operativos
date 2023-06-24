@@ -33,12 +33,8 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	//Verificar que pertenezca a un sector de arranque valido
-	if(mpt.signature != 0xAA55)
-	{
-		printf("La tabla de particiones no pertenece a un sector de arranque valido\n");
-		exit(EXIT_FAILURE);
-	}
+	print_mpt(&mpt);
+
 	exit(EXIT_SUCCESS);
 }
 
