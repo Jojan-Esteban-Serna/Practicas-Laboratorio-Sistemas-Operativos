@@ -26,13 +26,15 @@ int main(int argc, char *argv[])
 
 	MPT mpt;
 	// Leer la tabla de particiones a un offset de 446 bytes en el archivo pasado por linea de comandos
-	int result = read_struct_from_file(argv[1], &mpt, sizeof(MPT), 446);
+	// Ya que sizeof(MPT) es 66 y el offset es 446, estamos verificando implicitamente que el archivo es de al menos 512 bytes
+	int result = read_struct_from_file(argv[1], &mpt, sizeof(MPT), 446); 
+
 	if (result == 0)
 	{
 		printf("Error al cargar el struct desde el archivo\n");
 		exit(EXIT_FAILURE);
 	}
-	if(mpt.signature != 0xAA55)
+	if (mpt.signature != 0xAA55)
 	{
 		printf("Error: No se encontro la firma 0xAA55\n");
 		exit(EXIT_FAILURE);
@@ -48,4 +50,3 @@ void usage(char *program_name)
 	printf("%s <filename>\n", program_name);
 	exit(EXIT_FAILURE);
 }
-
