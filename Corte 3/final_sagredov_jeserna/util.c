@@ -37,7 +37,7 @@ int read_struct_from_file(char *filename, void *struct_ptr, int struct_size, int
 
 void print_size(long double size)
 {
-    const char *units[] = {"bytes", "KiB", "MiB", "GiB","TiB","PiB","EiB","ZiB","YiB","RiB","QiB"};
+    const char *units[] = {"bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB", "RiB", "QiB"};
     int index = 0;
 
     while (size >= 1024 && index < 10)
@@ -47,5 +47,12 @@ void print_size(long double size)
     }
     char formatted[20];
     sprintf(formatted, "%.2Lf %s", size, units[index]);
-    printf("%-16s",formatted);
+    printf("%-16s", formatted);
+}
+
+int chstolba(int c, int h, int s, int nh, int ns)
+{
+    c = ((0b11000000 & s) << 2) | c;
+    s = 0b00111111 & s;
+    return (c * nh * ns) + (h * ns) + (s - 1);
 }

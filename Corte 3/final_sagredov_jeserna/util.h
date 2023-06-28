@@ -16,5 +16,16 @@ int read_struct_from_file(char *filename, void *struct_ptr, int struct_size, int
  * @param size  Tamaño a imprimir (debe estar casteado a long double y ese numero casteado debes ser long)
  */
 void print_size(long double size);
+/**
+ * @brief Conviernte un numero de cilindro, cabeza, sector a un numero de bloque
+ * 
+ * @param c  Cilindro
+ * @param h  Cabeza
+ * @param s  Sector
+ * @param nh  Numero de cabezas
+ * @param ns  Numero de sectores
+ * @return int  Numero de bloque
+ */
+int chstolba(int c, int h, int s, int nh, int ns);
 
 #endif // UTIL_H

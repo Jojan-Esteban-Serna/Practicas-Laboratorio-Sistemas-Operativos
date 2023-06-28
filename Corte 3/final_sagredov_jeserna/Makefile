@@ -28,3 +28,4 @@ doc:
 
 clean:
 	rm -f *.o hdisk mbr_disk_*
+	rm -rf doc

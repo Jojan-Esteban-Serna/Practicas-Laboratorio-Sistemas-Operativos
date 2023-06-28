@@ -6,11 +6,12 @@
 void print_mpt(MPT *mpt)
 {
 
-    printf("%-16s%-16s%-16s%-16s%-16s%-16s\n", "Number", "Start(sector)", "End (sector)", "Size", "Code", "Name");
+    printf("%-16s%-16s%-16s%-16s%-16s%-16s%-16s%-16s%-16s%-16s\n", "Number", "Start(sector)", "End (sector)", "Size", "Code", "Name","CHS Start(SPT=63)", "CHS Start(SPT=2)","CHS End(SPT=63)", "CHS End(SPT=2)");
     for (int i = 0; i < 4; i++)
     {
         if (mpt->partition_table[i].partition_type != 0x00)
         {
+
             // Imprimir el numero de particion
             printf("%s", mpt->partition_table[i].boot_indicator == 0x80 ? "*" : " ");
             printf("%-16d", i + 1);
@@ -26,7 +27,7 @@ void print_partition_entry(PartitionEntry *partition_entry)
     // Imprimir el sector de fin
     long double end_sec = print_end(partition_entry);
     // Imprimir el tamaño de la particion
-    print_size((long  double)(end_sec-start_sec+1)* 512);
+    print_size((long double)(end_sec - start_sec + 1) * 512);
     // Imprimir el codigo de particion
     char hexstring[8];
     unsigned char partition_type = partition_entry->partition_type;
@@ -34,7 +35,17 @@ void print_partition_entry(PartitionEntry *partition_entry)
     printf("%-16s", hexstring);
     // Imprimir el nombre de la particion
     initialize_partition_names();
-    printf("%-16s\n", get_partition_name(partition_entry->partition_type));
+    printf("%-16s", get_partition_name(partition_entry->partition_type));
+    int chsstart63 = chstolba(partition_entry->starting_CHS[2], partition_entry->starting_CHS[0], partition_entry->starting_CHS[1], 255, 63);
+    int chsstart2 = chstolba(partition_entry->starting_CHS[2], partition_entry->starting_CHS[0] ,partition_entry->starting_CHS[1], 255, 2);
+
+    int chsend63 = chstolba(partition_entry->ending_CHS[2], partition_entry->ending_CHS[0] ,partition_entry->ending_CHS[1], 255, 63);
+    int chsend2 = chstolba(partition_entry->ending_CHS[2], partition_entry->ending_CHS[0] ,partition_entry->ending_CHS[1], 255, 2);
+
+    printf("%-16d", chsstart63);
+    printf("%-16d", chsstart2);
+    printf("%-16d", chsend63);
+    printf("%-16d\n", chsend2);
 }
 
 unsigned int print_start(PartitionEntry *partition_entry)
